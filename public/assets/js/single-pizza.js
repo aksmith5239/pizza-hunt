@@ -8,7 +8,27 @@ const $commentSection = document.querySelector('#comment-section');
 const $newCommentForm = document.querySelector('#new-comment-form');
 
 let pizzaId;
+function getPizza() {
+  //get id of pizza
+  const searchParams = new URLSearchParams(document.location.search.substring(1));
+  const pizzaId = searchParams.get('id');
 
+  //get pizza info
+  fetch(`api/pizzas/${pizzaId}`)
+  .then(response => {
+    if(!response.ok) {
+      throw new Error({ message: "Guido forgot to throw this pizza!"});
+    }
+    
+    return response.json();
+  })
+  .then(printPizza)
+  .catch(err => {
+    console.log(err);
+    alert(`Guido can't find this pizza in the oven. Taking you back to create it!`);
+    window.history.back();
+  });
+}
 function printPizza(pizzaData) {
   console.log(pizzaData);
 
@@ -114,3 +134,5 @@ $backBtn.addEventListener('click', function() {
 
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
+
+getPizza();
